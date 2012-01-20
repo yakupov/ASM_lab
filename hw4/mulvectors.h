@@ -4,6 +4,10 @@
 #include <vector>
 #define SIZE_OF_ELEM 8
 
-double mulVectors (double *first, double *second, size_t sz);
+#ifdef __cplusplus
+extern "C" {
+	double mulVectors (double *first, double *second, size_t sz);
+}
+#endif //__cplusplus
 
 #endif // MULVECTORS_H
