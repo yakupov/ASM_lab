@@ -1,5 +1,4 @@
 #include "mulvectors.h"
-
 	.intel_syntax noprefix
 	.text
 	.globl mulVectors
