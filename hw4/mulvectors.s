@@ -12,6 +12,9 @@ mulVectors:
 	mov	DWORD PTR [ebp-4], 0	/* still res, 'cause we can't mov QWORD */
 	mov	DWORD PTR [ebp-12], 0	/* i */
 
+	jmp mulVectors_SSE2
+
+mulVectors_FPU:
 //for i = 0..sz
 	jmp	.L2
 .L3:
@@ -38,3 +41,36 @@ mulVectors:
 	leave
 	ret
 
+
+mulVectors_SSE2:
+//for i = 0..sz
+	subps	xmm0, xmm0
+	jmp	.L5
+.L4:
+	mov	eax, DWORD PTR [ebp-12]
+	sal	eax, 3
+	add	eax, DWORD PTR [ebp+8]	/* 1st arg */
+	movlpd	xmm1, [eax]
+	mov	eax, DWORD PTR [ebp-12]
+	sal	eax, 3
+	add	eax, DWORD PTR [ebp+12]	/* 2nd arg */
+	movlpd	xmm2, [eax]
+	mulsd	xmm2, xmm1
+	addsd	xmm0, xmm2
+	inc	DWORD PTR [ebp-12]
+.L5:
+	mov	eax, DWORD PTR [ebp-12]
+	cmp	eax, DWORD PTR [ebp+16]	/* sz */
+	jb	.L4
+//end of for i = 0..sz
+	movsd	QWORD PTR [ebp-8], xmm0
+	fld	QWORD PTR [ebp-8]	/* return */
+	leave
+	ret
+
+
+mulVectors_SSE41:
+	//TODO calc
+	fld	QWORD PTR [ebp-8]	/* return */
+	leave
+	ret
