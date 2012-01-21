@@ -12,9 +12,26 @@ mulVectors:
 	mov	DWORD PTR [ebp-4], 0	/* still res, 'cause we can't mov QWORD */
 	mov	DWORD PTR [ebp-12], 0	/* i */
 
-	jmp mulVectors_SSE41
+#define sse2	0x4000000
+#define sse41	0x80000
+
+	push	ecx
+        push	edx
+        
+        mov	eax, 1
+        cpuid
+
+        test    edx, sse2
+        jz	mulVectors_FPU
+
+        test    edx, sse41
+        jz	mulVectors_SSE2
+
+	jmp	mulVectors_SSE41
 
 mulVectors_FPU:
+	pop	edx
+	pop	ecx
 //for i = 0..sz
 	jmp	.L2
 .L3:
@@ -43,6 +60,9 @@ mulVectors_FPU:
 
 
 mulVectors_SSE2:
+	pop	edx
+	pop	ecx
+
 //for i = 0..sz
 	subps	xmm0, xmm0
 	jmp	.L5
@@ -70,6 +90,9 @@ mulVectors_SSE2:
 
 
 mulVectors_SSE41:
+	pop	edx
+	pop	ecx
+
 	subps	xmm0, xmm0		/* result */
 	push	ebx
 	mov	eax, DWORD PTR [ebp+16]	/* our sz */
