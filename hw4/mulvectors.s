@@ -80,7 +80,7 @@ mulVectors_SSE41:
 	subps	xmm0, xmm0		/* result */
 	mov	eax, DWORD PTR [ebp+16]	/* our sz */
 	mov	ebx, eax
-	xor	ebx, 1
+	and	ebx, 0xFFFFFFFE
 	mov	DWORD PTR [ebp-8], ebx	/* evenized sz */
 	xor	ebx, eax		/* "one more element left" flag */
 	jmp	.L7
