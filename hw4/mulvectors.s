@@ -21,7 +21,7 @@ mulVectors:
         test    edx, 0x4000000		/* sse2 bit */
         jz	mulVectors_FPU
 
-        test    edx, 0x80000		/* sse4.1 bit */
+        test    ecx, 0x80000		/* sse4.1 bit */
         jz	mulVectors_SSE2
 
 	jmp	mulVectors_SSE41
