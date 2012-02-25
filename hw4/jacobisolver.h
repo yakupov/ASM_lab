@@ -11,14 +11,12 @@ public:
     JacobiSolver(std::string filename);
     void processJacobi();
     double setEps (double arg) {
-        if (arg > 0.0000000000000000000000001)
+        if (arg > 0)
             return this->eps = arg;
         return this->eps;
     }
 
 private:
-    Vector2D a;
-    Vector1D b;
     Vector1D x;
     Vector2D c;
     Vector1D g;

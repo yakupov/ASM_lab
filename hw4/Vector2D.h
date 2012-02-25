@@ -4,22 +4,25 @@
 #include <vector>
 #include <fstream>
 #include <string>
-#include "Vector.h"
+#include <assert.h>
 #include "Vector1D.h"
 #include "mulvectors.h"
 
-class Vector2D : public Vector {
+class Vector2D {
 public:
-    Vector2D (size_t dimension);
-    Vector2D (std::string filename);
+    Vector2D (size_t size);
+    Vector2D (const std::string &filename);
     Vector2D (const Vector2D& arg);
     void becomeInverseDiag ();                      //convert A to D^-1 (for Jacobi)
-    double elementAt (int, int);
-    int getDimension () {return dimension;}
+    double elementAt (int, int) const;
+    int getSize () const {return size;}
     void multiplyByMatrix (Vector2D &arg);          //!!! writes result to this
-    //Vector1D multiplyByVector (Vector1D &arg);
     void multByVectorModifyVector (Vector1D &arg);  //!!! writes result to argument
     void subtractMatrix (Vector2D &arg);            //!!! writes result to this
+
+protected:
+    std::vector<double> data;
+    int size;
 
 private:
     double writeTo(int x, int y, double arg);

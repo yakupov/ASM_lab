@@ -1,21 +1,18 @@
 #include "Vector1D.h"
 
 
-Vector1D::Vector1D(size_t dimension) {
-    this->dimension = dimension;
-
-    for (int i = 0; i < dimension; ++i) {
-        data.push_back (1);
-    }
+Vector1D::Vector1D(size_t size) :
+    size (size), 
+    data (size, 1) {
 }
 
 
-Vector1D::Vector1D(std::string filename) {
+Vector1D::Vector1D(const std::string &filename) {
     std::ifstream input (filename.c_str());
-    input >> dimension;
+    input >> size;
     double tmp;
-    for (int i = 0; i < dimension; ++i) {
-        for (int j = 0; j < dimension; ++j) {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
             input >> tmp;
         }
         input >> tmp; //B column
@@ -24,14 +21,16 @@ Vector1D::Vector1D(std::string filename) {
 }
 
 
-Vector1D::Vector1D (const Vector1D& arg):
-    Vector (arg) {
+Vector1D::Vector1D (const Vector1D& arg) :
+    size (arg.size),
+    data (arg.data) {
 }
 
 
-double Vector1D::abs() {
+
+double Vector1D::abs() const {
     double res = 0;
-    for (int i = 0; i < dimension; ++i) {
+    for (int i = 0; i < size; ++i) {
         res += data[i] * data[i];
     }
     return res;
@@ -39,34 +38,25 @@ double Vector1D::abs() {
 
 
 void Vector1D::addVector (Vector1D arg) {
-    if (arg.dimension != this->dimension) {
-        std::cout << "size mismatch\n";
-        throw ("size mismatch");
-    }
+    assert (arg.size == this->size);
 
-    for (int i = 0; i < dimension; ++i) {
+    for (int i = 0; i < size; ++i) {
         data[i] += arg.data[i];
     }
 }
 
 
-double Vector1D::elementAt(int x) {
-    if (x >= dimension) {
-        std::cout << "index OOB\n";
-        throw ("index out of bounds");
-    }
+double Vector1D::elementAt(int x) const {
+    assert (x < size);
 
     return data[x];
 }
 
 
 void Vector1D::subtractVector (Vector1D arg) {
-    if (arg.dimension != this->dimension) {
-        std::cout << "size mismatch\n";
-        throw ("size mismatch");
-    }
+    assert (arg.size == this->size);
 
-    for (int i = 0; i < dimension; ++i) {
+    for (int i = 0; i < size; ++i) {
         data[i] -= arg.data[i];
     }
 }
