@@ -1,7 +1,7 @@
 #include <cstring>
 #include <cstdio>
 #include <vector>
-#include "heap.h"
+#include "Heap.h"
 
 std::vector <Heap> heaps;
 
@@ -15,7 +15,7 @@ bool trace_enabled()
 extern "C"
 void* malloc(size_t size)
 {
-    void *p;// = internal_alloc(size, DEFAULT_ALIGNMENT);
+    void *p=0;// = internal_alloc(size, DEFAULT_ALIGNMENT);
 
     if (trace_enabled())
         // its generally bad idea to call I/O function from malloc

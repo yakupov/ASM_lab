@@ -3,9 +3,10 @@
 
 #include <cstring>
 #include <mutex>
+#include <vector>
 
-#include "superblock.h"
-#include "hardcorelinkedlist.h"
+#include "src/SuperBlock.h"
+#include "src/InternalAlloc.h"
 
 class Heap {
 public:
@@ -14,7 +15,7 @@ public:
     void free (void *);
 
 protected:
-    HardcoreLinkedList <SuperBlock> blocks;
+    std::vector <SuperBlock, InternalAlloc<SuperBlock> > blocks;
     std::mutex mutex;
 };
 

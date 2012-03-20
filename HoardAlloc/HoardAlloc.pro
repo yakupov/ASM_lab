@@ -11,14 +11,15 @@ TEMPLATE = lib
 
 DEFINES += HOARDALLOC_LIBRARY
 
-SOURCES += hoardalloc.cpp \
-    heap.cpp \
-    superblock.cpp
+SOURCES += \
+    src/HoardAlloc.cpp \
+    src/Heap.cpp \
+    src/SuperBlock.cpp
 
 HEADERS += \
-    heap.h \
-    superblock.h \
-    blockheader.h \
-    hardcorelinkedlist.h
+    src/Heap.h \
+    src/SuperBlock.h \
+    src/BlockHeader.h \
+    src/InternalAlloc.h
 
 QMAKE_CXXFLAGS += -std=c++0x

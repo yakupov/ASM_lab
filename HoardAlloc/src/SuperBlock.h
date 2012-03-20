@@ -2,10 +2,9 @@
 #define SUPERBLOCK_H
 
 #include <cstring>
-#include <unistd.h>
+#include <vector>
 
-#include "blockheader.h"
-#include "hardcorelinkedlist.h"
+#include "src/BlockHeader.h"
 
 class SuperBlock {
 public:
@@ -15,7 +14,7 @@ public:
     size_t size;
     size_t largestFreeFragmentSize;
 
-    HardcoreLinkedList <BlockHeader> blocks;
+    std::vector <BlockHeader> blocks;
 };
 
 #endif // SUPERBLOCK_H
