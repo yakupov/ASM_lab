@@ -20,6 +20,7 @@ HEADERS += \
     src/Heap.h \
     src/SuperBlock.h \
     src/BlockHeader.h \
-    src/InternalAlloc.h
+    src/InternalAlloc.h \
+    src/FreeMemoryFragment.h
 
-QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -std=c++0x -Wno-pointer-arith

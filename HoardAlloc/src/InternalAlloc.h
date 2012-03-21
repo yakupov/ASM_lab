@@ -49,6 +49,7 @@ public:
     }
 
     pointer allocate (size_type n, std::allocator<void>::const_pointer hint=0) {
+        (void)hint;
         return (pointer)mmap(NULL, sizeof(value_type) * n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     }
 
