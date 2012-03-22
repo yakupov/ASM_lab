@@ -23,4 +23,4 @@ HEADERS += \
     src/InternalAlloc.h \
     src/FreeMemoryFragment.h
 
-QMAKE_CXXFLAGS += -std=c++0x -Wno-pointer-arith
+QMAKE_CXXFLAGS += -std=c++0x -Wno-pointer-arith --shared -fPIC -g

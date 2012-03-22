@@ -3,8 +3,8 @@
 #include <vector>
 #include "Heap.h"
 
-std::vector <Heap> heaps;
-
+//std::vector <Heap> heaps;
+Heap heap;
 
 bool trace_enabled()
 {
@@ -15,7 +15,7 @@ bool trace_enabled()
 extern "C"
 void* malloc(size_t size)
 {
-    void *p=0;// = internal_alloc(size, DEFAULT_ALIGNMENT);
+    void *p=heap.allocate(size);//0;// = internal_alloc(size, DEFAULT_ALIGNMENT);
 
     if (trace_enabled())
         // its generally bad idea to call I/O function from malloc
@@ -30,6 +30,7 @@ extern "C"
 void free(void *ptr)
 {
     //internal_free(ptr);
+    heap.release(ptr);
 
     if (trace_enabled())
         fprintf(stderr, "free %p\n", ptr);
