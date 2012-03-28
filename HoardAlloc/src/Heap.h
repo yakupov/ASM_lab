@@ -1,21 +1,21 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include <cassert>
 #include <cstring>
 #include <exception>
 #include <mutex>
 #include <vector>
-
-#include "src/SuperBlock.h"
+#include "src/BlockHeader.h"
 #include "src/InternalAlloc.h"
+#include "src/SuperBlock.h"
 
 class Heap {
 public:
     Heap();
-    void * allocate (size_t);
+    void * allocate (size_t, size_t alignment);
     int findBlock (void * address);
     bool hasBlock (void * address);
+    void * reallocate (void * address, size_t size);
     void release (void *address);
 
 protected:

@@ -4,18 +4,24 @@
 #include <cstring>
 
 struct BlockHeader {
-    BlockHeader() : magic (0xDEADBEEF) {}
+    //BlockHeader() : magic (0xDEADBEEF) {}
 
     BlockHeader & operator= (const BlockHeader &arg) {
-        address = arg.address;
+        alignment = arg.alignment;
+        offset = arg.offset;
+        start = arg.start;
         size = arg.size;
+        magic = arg.magic;
 
         return *this;
     }
 
-    const int magic;
-    void *address;
-    size_t size;
+    size_t alignment;
+    //const
+    int magic;
+    size_t offset;  //start + offset == start of data
+    void *start;    //start of block
+    size_t size;    //size of block
 };
 
 #endif // BLOCKHEADER_H

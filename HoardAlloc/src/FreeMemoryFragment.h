@@ -5,16 +5,16 @@
 
 struct FreeMemoryFragment {
     FreeMemoryFragment() :
-        offset(0),
+        address(0),
         size(0) {
     }
 
-    FreeMemoryFragment(void * offset, size_t size) :
-        offset(offset),
+    FreeMemoryFragment(void * address, size_t size) :
+        address(address),
         size (size) {
     }
 
-    void * offset;
+    void * address;
     size_t size;
 };
 

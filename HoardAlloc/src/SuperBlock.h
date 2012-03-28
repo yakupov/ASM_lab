@@ -1,16 +1,15 @@
 #ifndef SUPERBLOCK_H
 #define SUPERBLOCK_H
 
-#include <cassert>
 #include <cstring>
 #include <exception>
 #include <set>
 #include <vector>
 #include "src/BlockHeader.h"
+#include "src/DefaultValues.h"
 #include "src/FreeMemoryFragment.h"
 #include "src/InternalAlloc.h"
 
-#define DEFAULT_SIZE 64
 
 class SuperBlock {
 public:
@@ -18,14 +17,25 @@ public:
     SuperBlock(const SuperBlock &arg);
     ~SuperBlock();
 
-    //SuperBlock & operator= (const SuperBlock &arg);
+    struct possibleAllocData {
+        std::multiset<FreeMemoryFragment>::iterator fragment;
+        size_t offset;
+    };
 
-    void * allocate (size_t size);
-    void * getOffset () {return memory;}
+    void * allocate (size_t size, size_t alignment);
+    void * getDataStart () {return memory;}
     size_t getSize () {return size;}
-    size_t maxAlloc ();
-    void release (void *address);
 
+    size_t maxAlloc() {
+        if (freeSpace.begin() == freeSpace.end())
+            return 0;
+
+        return (*--(freeSpace.end())).size;
+    }
+
+    void release (void *address);
+    void shrink (void * address, size_t size);
+    bool tryAlloc (size_t size, size_t alignment, possibleAllocData *allocData = 0);
 
 protected:
     void *memory;
