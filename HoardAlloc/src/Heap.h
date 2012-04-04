@@ -2,7 +2,6 @@
 #define HEAP_H
 
 #include <cstring>
-#include <exception>
 #include <mutex>
 #include <vector>
 #include "src/BlockHeader.h"
@@ -11,7 +10,10 @@
 
 class Heap {
 public:
-    Heap();
+    Heap ();
+    Heap (const Heap & heap) {(void) heap;}
+    Heap & operator= (const Heap & heap) {(void) heap; return *this;}
+
     void * allocate (size_t, size_t alignment);
     int findBlock (void * address);
     bool hasBlock (void * address);
@@ -22,7 +24,7 @@ protected:
     //void transferBlockToAnotherHeap (int index, const Heap & heap); //TODO
 
     std::vector <SuperBlock, InternalAlloc<SuperBlock> > blocks;
-    //std::mutex mutex;                                               //TODO
+    std::mutex mut;
 };
 
 #endif // HEAP_H

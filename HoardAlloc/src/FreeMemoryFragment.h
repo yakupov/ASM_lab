@@ -14,13 +14,20 @@ struct FreeMemoryFragment {
         size (size) {
     }
 
+    size_t getSize () const {return size;}
+    void * getStart () const {return address;}
+
+    void setSize (size_t size) {this->size = size;}
+    void setStart (void * start) {this->address = start;}
+
+protected:
     void * address;
     size_t size;
 };
 
 struct FreeMemoryFragmentComparator {
     bool operator()(FreeMemoryFragment a, FreeMemoryFragment b) const {
-        return a.size < b.size;
+        return a.getSize() < b.getSize();
     }
 };
 

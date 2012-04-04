@@ -1,6 +1,6 @@
 #include "Allocator.h"
 
-#include <iostream>
+//#include <iostream>
 
 Allocator::Allocator() {
     heaps.push_back(Heap());
@@ -8,10 +8,10 @@ Allocator::Allocator() {
 
 
 void * Allocator::allocate(size_t size, size_t alignment) {
-    std::cout << "trying Allocator::allocate\n";
+    //std::cout << "trying Allocator::allocate\n";
 
-    if (size > DEFAULT_SIZE / 2) {
-        std::cout << "Allocator::allocate: large alloc; alignment and size: " << alignment << ' ' << size << std::endl;
+    if (size > DEFAULT_SIZE / 2 || alignment > DEFAULT_SIZE / 3) {
+        //std::cout << "Allocator::allocate: large alloc; alignment and size: " << alignment << ' ' << size << std::endl;
         BlockHeader header;
         header.magic = DEFAULT_MAGIC;
         header.size = size + alignment + sizeof (BlockHeader);
@@ -59,11 +59,11 @@ bool Allocator::isValidAlignment(size_t alignment) {
 
 
 void * Allocator::realloc(void *address, size_t size) {
-    std::cout << "trying Allocator::reallocate\n";
+    //std::cout << "trying Allocator::realloc\n";
 
     for (unsigned int i = 0; i < heaps.size(); ++i) {
         if (heaps[i].hasBlock(address)) {
-            std::cout << i << ' ' << address << " small realloc\n";
+            //std::cout << i << ' ' << address << " small realloc\n";
 
             if (size < DEFAULT_SIZE / 2) {
                 return heaps[i].reallocate (address, size);
@@ -71,7 +71,7 @@ void * Allocator::realloc(void *address, size_t size) {
                 BlockHeader * head = (BlockHeader *)(address - sizeof (BlockHeader));
                 void * newAddress = allocate (size, head->alignment);
                 memcpy (newAddress, address, head->size);
-                release(address);
+                //release (address);
                 return newAddress;
             }
         }
@@ -80,12 +80,14 @@ void * Allocator::realloc(void *address, size_t size) {
     for (unsigned int i = 0; i < largeObjects.size(); ++i) {
         if (largeObjects[i].start + largeObjects[i].offset == address) {
 
-            std::cout << "large realloc \n";
+            //std::cout << "large realloc \n";
 
             if (largeObjects[i].size - largeObjects[i].offset >= size) { //shrink
                 size_t newsize = largeObjects[i].offset + size;
                 munmap (largeObjects[i].start + newsize, largeObjects[i].size - newsize);
                 largeObjects[i].size = newsize;
+                BlockHeader * head = (BlockHeader *)(address - sizeof (BlockHeader));
+                head->size = newsize;
                 return address;
             } else {                                                     //extend
                 void * newAddress = allocate (size, largeObjects[i].alignment);
@@ -104,19 +106,19 @@ void * Allocator::realloc(void *address, size_t size) {
 
 
 void Allocator::release(void *address) {
-    std::cout << "trying Allocator::release\n";
+    //std::cout << "trying Allocator::release\n";
+
+    for (unsigned int i = 0; i < heaps.size(); ++i) {
+        if (heaps[i].hasBlock (address)) {
+            heaps[i].release (address);
+            return;
+        }
+    }
 
     for (unsigned int i = 0; i < largeObjects.size(); ++i) {
         if (largeObjects[i].start + largeObjects[i].offset == address) {
             munmap (largeObjects[i].start, largeObjects[i].size);
             largeObjects.erase(largeObjects.begin() + i);
-            return;
-        }
-    }
-
-    for (unsigned int i = 0; i < heaps.size(); ++i) {
-        if (heaps[i].hasBlock(address)) {
-            heaps[i].release (address);
             return;
         }
     }

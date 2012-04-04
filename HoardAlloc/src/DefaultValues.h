@@ -3,11 +3,9 @@
 
 #define DEFAULT_ALIGNMENT 8
 #define DEFAULT_MAGIC 0xDEADBEEF
-#define DEFAULT_SIZE 8192
+#define DEFAULT_SIZE 128
 
 #include <iostream>
-#include <cstdio>
-
 #define assert(exp) {                                                     \
     if(!(exp)) {                                                          \
         std::cerr << "Assertion failed: " << (char*)(__FILE__) << "("     \
@@ -16,8 +14,5 @@
         abort ();                                                         \
     }                                                                     \
 }
-
-
-
 
 #endif // DEFAULTVALUES_H

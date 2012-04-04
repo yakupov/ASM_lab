@@ -2,7 +2,6 @@
 #define SUPERBLOCK_H
 
 #include <cstring>
-#include <exception>
 #include <set>
 #include <vector>
 #include "src/BlockHeader.h"
@@ -25,17 +24,10 @@ public:
     void * allocate (size_t size, size_t alignment);
     void * getDataStart () {return memory;}
     size_t getSize () {return size;}
-
-    size_t maxAlloc() {
-        if (freeSpace.begin() == freeSpace.end())
-            return 0;
-
-        return (*--(freeSpace.end())).size;
-    }
-
+    size_t maxAlloc();
     void release (void *address);
     void shrink (void * address, size_t size);
-    bool tryAlloc (size_t size, size_t alignment, possibleAllocData *allocData = 0);
+    //bool tryAlloc (size_t size, size_t alignment, possibleAllocData *allocData = 0);
 
 protected:
     void *memory;

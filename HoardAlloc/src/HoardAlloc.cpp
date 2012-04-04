@@ -18,17 +18,24 @@ bool trace_enabled() {
 }
 
 
+bool trace_enabled2() {
+    static bool enabled = (getenv("MINT") == NULL);
+    return enabled;
+}
+
+
 extern "C"
 void* malloc(size_t size) {
-    fprintf(stderr, "gonna malloc %zu\n", size);
+    //fprintf(stderr, "gonna malloc %zu\n", size);
 
     void * p = ha.allocate(size, DEFAULT_ALIGNMENT);
 
-
     BlockHeader * head = (BlockHeader *)(p - sizeof (BlockHeader));
-    std::cout << "header values: (mag, al, sz, off, req_size)\n";
-    printf ("%p %zu %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset, size);
-    assert (head->magic == 0xDEADBEEF);
+    if (trace_enabled2()) {
+        printf ("header values: (mag, al, sz, off, req_size)\n");
+        printf ("%X %zu %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset, size);
+    }
+    assert (head->magic == (int)0xDEADBEEF);
     assert (head->alignment == DEFAULT_ALIGNMENT);
     assert (head->size - head->offset == size);
     assert (head->start + head->offset == p);
@@ -46,22 +53,21 @@ void* malloc(size_t size) {
 
 extern "C"
 void free(void *ptr) {
-    fprintf(stderr, "gonna free \n");
+    //fprintf(stderr, "gonna free \n");
+
     if (ptr == NULL) {
         fprintf(stderr, "free: null pointer\n");
         return;
     }
 
-
-
     BlockHeader * head = (BlockHeader *)(ptr - sizeof (BlockHeader));
-    std::cout << "header values: (mag, al, sz, off)\n";
-    printf ("%p %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset);
-    assert (head->magic == 0xDEADBEEF);
+    if (trace_enabled2()) {
+        printf ("header values: (mag, al, sz, off)\n");
+        printf ("%X %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset);
+    }
+    assert (head->magic == (int)0xDEADBEEF);
     assert (head->start + head->offset == ptr);
     assert ((unsigned)ptr % head->alignment == 0);
-
-
 
     ha.release(ptr);
 
@@ -72,7 +78,7 @@ void free(void *ptr) {
 
 extern "C"
 void* realloc(void *ptr, size_t size) {
-    fprintf(stderr, "gonna realloc %zu\n", size);
+    //fprintf(stderr, "gonna realloc %zu\n", size);
 
     if (ptr == 0) {
         void * p = ha.allocate(size, DEFAULT_ALIGNMENT);
@@ -85,11 +91,14 @@ void* realloc(void *ptr, size_t size) {
 
     void* p = ha.realloc(ptr, size);
 
-
     BlockHeader * head = (BlockHeader *)(p - sizeof (BlockHeader));
-    std::cout << "header values: (mag, al, sz, off, req_size)\n";
-    printf ("%p %zu %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset, size);
-    assert (head->magic == 0xDEADBEEF);
+    if (trace_enabled2()) {
+        printf ("header values: (mag, al, sz, off, req_size)\n");
+        printf ("%X %zu %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset, size);
+    }
+    assert (head->magic == (int)0xDEADBEEF);
+    assert (oldh.magic == (int)0xDEADBEEF);
+    assert (ha.isValidAlignment(oldh.alignment));
     assert (head->alignment == oldh.alignment);
     assert (head->size - head->offset == size);
     assert (head->start + head->offset == p);
@@ -105,20 +114,19 @@ void* realloc(void *ptr, size_t size) {
 
 extern "C"
 void* calloc(size_t n, size_t size) {
-    fprintf(stderr, "gonna calloc %zu\n", size);
+    //fprintf(stderr, "gonna calloc %zu\n", size);
     void *p=ha.allocate(size * n, DEFAULT_ALIGNMENT);
 
-
-
     BlockHeader * head = (BlockHeader *)(p - sizeof (BlockHeader));
-    assert (head->magic == 0xDEADBEEF);
+    if (trace_enabled2()) {
+        printf ("header values: (mag, al, sz, off, req_size)\n");
+        printf ("%X %zu %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset, size);
+    }
+    assert (head->magic == (int)0xDEADBEEF);
     assert (head->alignment == DEFAULT_ALIGNMENT);
     assert (head->size - head->offset == size * n);
     assert (head->start + head->offset == p);
     assert ((unsigned)p % DEFAULT_ALIGNMENT == 0);
-
-
-
 
     if (trace_enabled())
         fprintf(stderr, "calloc %zu %zu %p\n", n, size, p);
@@ -129,7 +137,7 @@ void* calloc(size_t n, size_t size) {
 
 extern "C"
 int posix_memalign(void** memptr, size_t alignment, size_t size) {
-    fprintf(stderr, "gonna pma %zu %zu \n", size, alignment);
+    //fprintf(stderr, "gonna pma %zu %zu \n", size, alignment);
     *memptr = 0;
 
     if (!ha.isValidAlignment(alignment))
@@ -139,7 +147,11 @@ int posix_memalign(void** memptr, size_t alignment, size_t size) {
 
 
     BlockHeader * head = (BlockHeader *)(p - sizeof (BlockHeader));
-    assert (head->magic == 0xDEADBEEF);
+    if (trace_enabled2()) {
+        printf ("header values: (mag, al, sz, off, req_size)\n");
+        printf ("%X %zu %zu %zu %zu\n", head->magic, head->alignment, head->size, head->offset, size);
+    }
+    assert (head->magic == (int)0xDEADBEEF);
     assert (head->alignment == alignment);
     assert (head->size - head->offset == size);
     assert (head->start + head->offset == p);

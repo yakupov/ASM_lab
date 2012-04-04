@@ -1,9 +1,7 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
 
-#include <exception>
 #include <vector>
-
 #include "src/BlockHeader.h"
 #include "src/DefaultValues.h"
 #include "src/InternalAlloc.h"

@@ -26,4 +26,4 @@ HEADERS += \
     src/Allocator.h \
     src/DefaultValues.h
 
-QMAKE_CXXFLAGS += -std=c++0x -Wno-pointer-arith --shared -fPIC -g -O0
+QMAKE_CXXFLAGS += -std=c++0x -Wno-pointer-arith --shared -fPIC -g
